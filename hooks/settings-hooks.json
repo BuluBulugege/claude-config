@@ -1,0 +1,44 @@
+{
+  "UserPromptSubmit": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo \"🕐 Current time: $(date '+%Y-%m-%d %H:%M:%S %Z')\""
+        }
+      ]
+    },
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '📦 [Credential Vault]' && cat ~/.claude/creds-vault.local.md 2>/dev/null"
+        }
+      ]
+    }
+  ],
+  "PostToolUse": [
+    {
+      "matcher": "Write|Edit",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if [ -f tsconfig.json ]; then result=$(npx tsc --noEmit 2>&1); if [ -n \"$result\" ]; then echo \"⚠️ TypeScript errors found — fix before reporting done:\"; echo \"$result\" | head -30; fi; fi"
+        }
+      ]
+    }
+  ],
+  "Stop": [
+    {
+      "matcher": "",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "if git rev-parse --git-dir >/dev/null 2>&1; then if ! git diff --quiet || ! git diff --staged --quiet || [ -n \"$(git ls-files --others --exclude-standard 2>/dev/null)\" ]; then git add -A && git commit -m \"Auto-commit: $(date '+%Y-%m-%d %H:%M')\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\" && git push 2>/dev/null && echo '✅ Auto-committed and pushed'; fi; fi"
+        }
+      ]
+    }
+  ]
+}
